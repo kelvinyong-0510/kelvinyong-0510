@@ -1,0 +1,167 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f5f6fa;
+  color: #1f2328;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+  display: grid;
+  gap: 24px;
+}
+
+header {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.editor,
+.list {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+label {
+  display: block;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #e2e8f0;
+  color: #1f2328;
+}
+
+.snippet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.snippet-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.snippet-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.snippet-card pre {
+  margin: 0;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: "SFMono-Regular", ui-monospace, monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.snippet-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.snippet-actions button {
+  background: #e2e8f0;
+  color: #1f2328;
+}
+
+.snippet-actions button.danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.empty {
+  margin-top: 12px;
+  color: #64748b;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0f172a;
+    color: #f8fafc;
+  }
+
+  header,
+  .editor,
+  .list {
+    background: #111827;
+    box-shadow: none;
+  }
+
+  input,
+  textarea {
+    background: #0b1220;
+    border-color: #1f2937;
+    color: #f8fafc;
+  }
+
+  .snippet-card {
+    border-color: #1f2937;
+  }
+
+  .snippet-card pre {
+    background: #0b1220;
+  }
+
+  button.secondary,
+  .snippet-actions button {
+    background: #1f2937;
+    color: #f8fafc;
+  }
+}
