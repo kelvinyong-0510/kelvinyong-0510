@@ -37,6 +37,33 @@
   const isContentEditable = (element) =>
     element?.isContentEditable && !element.closest("[contenteditable='false']");
 
+  const getActiveEditable = () => {
+    const activeElement = document.activeElement;
+    if (activeElement && (isTextInput(activeElement) || activeElement.tagName === "TEXTAREA")) {
+      return activeElement;
+    }
+
+    if (activeElement && isContentEditable(activeElement)) {
+      return activeElement;
+    }
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return null;
+    }
+
+    const anchorNode = selection.anchorNode;
+    if (!anchorNode) {
+      return null;
+    }
+
+    if (anchorNode.nodeType === Node.ELEMENT_NODE) {
+      return anchorNode.closest?.("[contenteditable='true']") ?? null;
+    }
+
+    return anchorNode.parentElement?.closest("[contenteditable='true']") ?? null;
+  };
+
   const isEditable = (element) =>
     element &&
     !element.readOnly &&
@@ -160,7 +187,7 @@
   let isReplacing = false;
 
   const handleExpansion = (event, endWith) => {
-    const activeElement = document.activeElement;
+    const activeElement = getActiveEditable();
     if (!isEditable(activeElement)) {
       return;
     }
@@ -201,6 +228,17 @@
     handleExpansion(event, endWith);
   };
 
+  const handleBeforeInput = (event) => {
+    if (event.inputType === "insertText" && event.data === " ") {
+      handleExpansion(event, " ");
+      return;
+    }
+
+    if (event.inputType === "insertParagraph") {
+      handleExpansion(event, "\n");
+    }
+  };
+
   const handleInput = (event) => {
     if (isReplacing || event.isComposing) {
       return;
@@ -216,6 +254,7 @@
     }
   });
 
-  document.addEventListener("keydown", handleKeydown);
-  document.addEventListener("input", handleInput);
+  document.addEventListener("keydown", handleKeydown, true);
+  document.addEventListener("beforeinput", handleBeforeInput, true);
+  document.addEventListener("input", handleInput, true);
 })();
