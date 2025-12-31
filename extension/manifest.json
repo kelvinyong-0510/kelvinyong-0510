@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Snippet Manager",
+  "version": "1.0.0",
+  "description": "Manage reusable text snippets.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_script.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Snippet Manager",
+    "default_popup": "popup.html"
+  }
+}
