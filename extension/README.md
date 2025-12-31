@@ -13,5 +13,5 @@
 
 1. Create a snippet with a shortcut like `/invoice` and save it.
 2. In any textarea or contenteditable area, type the shortcut.
-3. Press space, enter, or tab to expand it into the snippet content.
+3. The shortcut expands immediately, or you can press space, enter, or tab.
 4. Single-line inputs do not support line breaks, so multiline snippets will be flattened there.

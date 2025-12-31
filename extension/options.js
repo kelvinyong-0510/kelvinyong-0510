@@ -120,6 +120,15 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  const duplicate = snippets.find(
+    (snippet) => snippet.shortcut === shortcut && snippet.id !== id
+  );
+  if (duplicate) {
+    window.alert(`Shortcut "${shortcut}" is already in use.`);
+    shortcutInput.focus();
+    return;
+  }
+
   const nextSnippet = {
     id,
     shortcut,
