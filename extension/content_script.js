@@ -34,29 +34,70 @@
     );
   };
 
+  const isContentEditable = (element) =>
+    element?.isContentEditable && !element.closest("[contenteditable='false']");
+
   const isEditable = (element) =>
     element &&
     !element.readOnly &&
     !element.disabled &&
-    (element.tagName === "TEXTAREA" || isTextInput(element));
+    (element.tagName === "TEXTAREA" ||
+      isTextInput(element) ||
+      isContentEditable(element));
 
-  const handleShortcut = (event) => {
-    if (![" ", "Enter", "Tab"].includes(event.key)) {
+  const getTextBeforeCursor = (element) => {
+    if (element.tagName === "TEXTAREA" || isTextInput(element)) {
+      return element.value.slice(0, element.selectionStart ?? 0);
+    }
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return "";
+    }
+
+    const range = selection.getRangeAt(0).cloneRange();
+    range.selectNodeContents(element);
+    range.setEnd(selection.anchorNode, selection.anchorOffset);
+    return range.toString();
+  };
+
+  const replaceShortcut = (element, shortcut, replacement, endWith) => {
+    if (element.tagName === "TEXTAREA" || isTextInput(element)) {
+      const cursorPosition = element.selectionStart ?? 0;
+      const startIndex = cursorPosition - shortcut.length;
+      element.setRangeText(
+        replacement + endWith,
+        startIndex,
+        cursorPosition,
+        "end"
+      );
       return;
     }
 
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    if (range.startOffset < shortcut.length) {
+      return;
+    }
+    range.setStart(range.startContainer, range.startOffset - shortcut.length);
+    range.deleteContents();
+    range.insertNode(document.createTextNode(replacement + endWith));
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
+
+  const handleExpansion = (event, endWith) => {
     const activeElement = document.activeElement;
     if (!isEditable(activeElement)) {
       return;
     }
 
-    const cursorPosition = activeElement.selectionStart;
-    if (cursorPosition == null) {
-      return;
-    }
-
-    const value = activeElement.value;
-    const textBeforeCursor = value.slice(0, cursorPosition);
+    const textBeforeCursor = getTextBeforeCursor(activeElement);
     const match = textBeforeCursor.match(/(^|\s)(\/[^\s]+)$/);
 
     if (!match) {
@@ -70,12 +111,23 @@
       return;
     }
 
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
 
-    const replacement =
-      snippet.content + (event.key === " " ? " " : event.key === "Enter" ? "\n" : "");
-    const startIndex = cursorPosition - shortcut.length;
-    activeElement.setRangeText(replacement, startIndex, cursorPosition, "end");
+    replaceShortcut(activeElement, shortcut, snippet.content, endWith);
+  };
+
+  const handleKeydown = (event) => {
+    if (![" ", "Enter", "Tab"].includes(event.key)) {
+      return;
+    }
+    const endWith = event.key === " " ? " " : event.key === "Enter" ? "\n" : "";
+    handleExpansion(event, endWith);
+  };
+
+  const handleInput = () => {
+    handleExpansion(null, "");
   };
 
   loadSnippets();
@@ -85,5 +137,6 @@
     }
   });
 
-  document.addEventListener("keydown", handleShortcut);
+  document.addEventListener("keydown", handleKeydown);
+  document.addEventListener("input", handleInput);
 })();
