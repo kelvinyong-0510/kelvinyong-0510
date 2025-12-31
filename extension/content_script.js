@@ -1,7 +1,59 @@
+const DEFAULT_TRIGGER = "/invoice";
+const DEFAULT_SNIPPET = "Person In Charge:\nCompany Name:";
+const STORAGE_KEYS = {
+  shortcut: "savedShortcut",
+  snippet: "savedSnippet",
+};
 
-const INVOICE_TRIGGER = "/invoice";
-const INVOICE_SNIPPET =
-  "Person In Charge:\nCompany Name:";
+let activeTrigger = DEFAULT_TRIGGER;
+let activeSnippet = DEFAULT_SNIPPET;
+
+function setConfig({ shortcut, snippet }) {
+  if (typeof shortcut === "string" && shortcut.trim()) {
+    activeTrigger = shortcut;
+  } else {
+    activeTrigger = DEFAULT_TRIGGER;
+  }
+
+  if (typeof snippet === "string" && snippet.trim()) {
+    activeSnippet = snippet;
+  } else {
+    activeSnippet = DEFAULT_SNIPPET;
+  }
+}
+
+async function loadConfig() {
+  if (typeof chrome !== "undefined" && chrome.storage?.local) {
+    const data = await chrome.storage.local.get({
+      [STORAGE_KEYS.shortcut]: DEFAULT_TRIGGER,
+      [STORAGE_KEYS.snippet]: DEFAULT_SNIPPET,
+    });
+    setConfig({
+      shortcut: data[STORAGE_KEYS.shortcut],
+      snippet: data[STORAGE_KEYS.snippet],
+    });
+    return;
+  }
+
+  const shortcut = localStorage.getItem(STORAGE_KEYS.shortcut);
+  const snippet = localStorage.getItem(STORAGE_KEYS.snippet);
+  setConfig({ shortcut, snippet });
+}
+
+if (typeof chrome !== "undefined" && chrome.storage?.onChanged) {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local") {
+      return;
+    }
+
+    const shortcut =
+      changes[STORAGE_KEYS.shortcut]?.newValue ?? activeTrigger;
+    const snippet = changes[STORAGE_KEYS.snippet]?.newValue ?? activeSnippet;
+    setConfig({ shortcut, snippet });
+  });
+}
+
+loadConfig();
 
 function isTextInput(target) {
   return (
@@ -141,21 +193,29 @@ function insertTextAtCursorContentEditable(target, text, triggerLength) {
 
   const lines = text.split("\n");
   const fragment = document.createDocumentFragment();
+  let lastNode = null;
   lines.forEach((line, index) => {
     if (line) {
-      fragment.appendChild(document.createTextNode(line));
+      lastNode = document.createTextNode(line);
+      fragment.appendChild(lastNode);
     }
 
     if (index < lines.length - 1) {
-      fragment.appendChild(document.createElement("br"));
+      lastNode = document.createElement("br");
+      fragment.appendChild(lastNode);
     }
   });
 
   replaceRange.insertNode(fragment);
 
   const newRange = document.createRange();
-  newRange.selectNodeContents(target);
-  newRange.collapse(false);
+  if (lastNode) {
+    newRange.setStartAfter(lastNode);
+    newRange.collapse(true);
+  } else {
+    newRange.selectNodeContents(target);
+    newRange.collapse(false);
+  }
   selection.removeAllRanges();
   selection.addRange(newRange);
 }
@@ -181,11 +241,11 @@ function handleInputEvent(event) {
   const lastWordMatch = textBeforeCursor.match(/(\S+)$/);
   const lastWord = lastWordMatch ? lastWordMatch[1] : "";
 
-  if (lastWord === INVOICE_TRIGGER) {
+  if (lastWord === activeTrigger) {
     insertSnippetAtCursor(
       editableTarget,
-      INVOICE_SNIPPET,
-      INVOICE_TRIGGER.length
+      activeSnippet,
+      activeTrigger.length
     );
   }
 }
