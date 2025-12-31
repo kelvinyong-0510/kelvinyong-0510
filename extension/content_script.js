@@ -120,6 +120,12 @@
     range.collapse(false);
   };
 
+  const dispatchInputEvent = (element) => {
+    element.dispatchEvent(
+      new InputEvent("input", { bubbles: true, inputType: "insertText" })
+    );
+  };
+
   const replaceShortcut = (element, shortcut, replacement, endWith) => {
     const normalizedReplacement = normalizeReplacement(element, replacement);
     if (element.tagName === "TEXTAREA" || isTextInput(element)) {
@@ -141,9 +147,14 @@
 
     const range = selection.getRangeAt(0);
     deleteCharactersFromRange(range, shortcut.length);
-    insertContentEditableText(range, normalizedReplacement + endWith);
+    const insertedText = normalizedReplacement + endWith;
+    const inserted = document.execCommand?.("insertText", false, insertedText);
+    if (!inserted) {
+      insertContentEditableText(range, insertedText);
+    }
     selection.removeAllRanges();
     selection.addRange(range);
+    dispatchInputEvent(element);
   };
 
   let isReplacing = false;
@@ -173,10 +184,13 @@
     }
 
     isReplacing = true;
-    replaceShortcut(activeElement, shortcut, snippet.content, endWith);
-    window.setTimeout(() => {
-      isReplacing = false;
-    }, 0);
+    try {
+      replaceShortcut(activeElement, shortcut, snippet.content, endWith);
+    } finally {
+      window.setTimeout(() => {
+        isReplacing = false;
+      }, 0);
+    }
   };
 
   const handleKeydown = (event) => {
