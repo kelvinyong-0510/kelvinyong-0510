@@ -1,0 +1,156 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.popup {
+  width: 360px;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+header {
+  background: #111827;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+p,
+label,
+textarea,
+input {
+  font-size: 13px;
+}
+
+code {
+  background: #1f2937;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+section {
+  background: #111827;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background: #0b1220;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #1f2937;
+  color: #f8fafc;
+}
+
+.snippet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.snippet-card {
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.snippet-card h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.snippet-card pre {
+  margin: 0;
+  background: #0b1220;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.snippet-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.snippet-actions button {
+  background: #1f2937;
+}
+
+.snippet-actions button.danger {
+  background: #ef4444;
+}
+
+.empty {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.message {
+  margin: 8px 0 0;
+  color: #94a3b8;
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WhatsApp Snippet Manager</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header>
+        <h1>WhatsApp Snippet Manager</h1>
+        <p>Type a trigger like <code>;addr</code> then press Space or Enter.</p>
+      </header>
+
+      <section class="editor">
+        <h2 id="form-title">Add Snippet</h2>
+        <form id="snippet-form">
+          <input type="hidden" id="snippet-id" />
+          <label>
+            Trigger
+            <input id="snippet-trigger" type="text" placeholder=";addr" required />
+          </label>
+          <label>
+            Content
+            <textarea id="snippet-content" rows="4" required></textarea>
+          </label>
+          <label class="toggle">
+            <input id="snippet-enabled" type="checkbox" checked />
+            Enabled
+          </label>
+          <div class="actions">
+            <button type="submit" id="save-button">Save Snippet</button>
+            <button type="button" id="cancel-button" class="secondary" hidden>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="list">
+        <h2>Saved Snippets</h2>
+        <ul id="snippet-list" class="snippet-list"></ul>
+        <p id="empty-state" class="empty">No snippets saved yet.</p>
+      </section>
+
+      <section class="import-export">
+        <h2>Import / Export</h2>
+        <textarea id="json-area" rows="4" placeholder="Paste snippets JSON here"></textarea>
+        <div class="actions">
+          <button type="button" id="export-button">Export JSON</button>
+          <button type="button" id="import-button" class="secondary">Import JSON</button>
+        </div>
+        <p id="message" class="message" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
