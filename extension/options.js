@@ -1,5 +1,6 @@
 const form = document.getElementById("snippet-form");
 const snippetIdInput = document.getElementById("snippet-id");
+const shortcutInput = document.getElementById("snippet-shortcut");
 const titleInput = document.getElementById("snippet-title");
 const contentInput = document.getElementById("snippet-content");
 const listElement = document.getElementById("snippet-list");
@@ -23,6 +24,7 @@ const saveSnippets = (snippets) =>
 
 const resetForm = () => {
   snippetIdInput.value = "";
+  shortcutInput.value = "";
   titleInput.value = "";
   contentInput.value = "";
   formTitle.textContent = "Add Snippet";
@@ -31,6 +33,7 @@ const resetForm = () => {
 
 const populateForm = (snippet) => {
   snippetIdInput.value = snippet.id;
+  shortcutInput.value = snippet.shortcut ?? "";
   titleInput.value = snippet.title;
   contentInput.value = snippet.content;
   formTitle.textContent = "Edit Snippet";
@@ -52,7 +55,16 @@ const renderSnippets = (snippets) => {
     card.className = "snippet-card";
 
     const title = document.createElement("h3");
-    title.textContent = snippet.title;
+    title.textContent = snippet.shortcut || snippet.title;
+
+    if (snippet.title && snippet.title !== snippet.shortcut) {
+      const label = document.createElement("p");
+      label.className = "snippet-title";
+      label.textContent = snippet.title;
+      card.append(title, label);
+    } else {
+      card.append(title);
+    }
 
     const content = document.createElement("pre");
     content.textContent = snippet.content;
@@ -79,7 +91,7 @@ const renderSnippets = (snippets) => {
     });
 
     actions.append(editButton, deleteButton);
-    card.append(title, content, actions);
+    card.append(content, actions);
     listElement.append(card);
   });
 };
@@ -89,13 +101,28 @@ const init = async () => {
   renderSnippets(snippets);
 };
 
+const normalizeShortcut = (value) => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+};
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const snippets = await getSnippets();
   const id = snippetIdInput.value || crypto.randomUUID();
+  const shortcut = normalizeShortcut(shortcutInput.value);
+
+  if (!shortcut) {
+    shortcutInput.focus();
+    return;
+  }
 
   const nextSnippet = {
     id,
+    shortcut,
     title: titleInput.value.trim(),
     content: contentInput.value.trim(),
     updatedAt: new Date().toISOString(),

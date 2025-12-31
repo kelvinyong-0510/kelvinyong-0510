@@ -1,0 +1,49 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #1f2328;
+}
+
+.popup {
+  min-width: 240px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+h1 {
+  font-size: 16px;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #111827;
+    color: #f8fafc;
+  }
+
+  p {
+    color: #cbd5f5;
+  }
+}

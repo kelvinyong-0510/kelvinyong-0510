@@ -101,6 +101,12 @@ button.secondary {
   font-size: 16px;
 }
 
+.snippet-title {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
 .snippet-card pre {
   margin: 0;
   background: #f8fafc;
