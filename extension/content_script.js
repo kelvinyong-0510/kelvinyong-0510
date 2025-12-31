@@ -61,12 +61,20 @@
     return range.toString();
   };
 
+  const normalizeReplacement = (element, replacement) => {
+    if (isTextInput(element)) {
+      return replacement.replace(/\n/g, " ");
+    }
+    return replacement;
+  };
+
   const replaceShortcut = (element, shortcut, replacement, endWith) => {
+    const normalizedReplacement = normalizeReplacement(element, replacement);
     if (element.tagName === "TEXTAREA" || isTextInput(element)) {
       const cursorPosition = element.selectionStart ?? 0;
       const startIndex = cursorPosition - shortcut.length;
       element.setRangeText(
-        replacement + endWith,
+        normalizedReplacement + endWith,
         startIndex,
         cursorPosition,
         "end"
@@ -85,7 +93,7 @@
     }
     range.setStart(range.startContainer, range.startOffset - shortcut.length);
     range.deleteContents();
-    range.insertNode(document.createTextNode(replacement + endWith));
+    range.insertNode(document.createTextNode(normalizedReplacement + endWith));
     range.collapse(false);
     selection.removeAllRanges();
     selection.addRange(range);
@@ -126,9 +134,6 @@
     handleExpansion(event, endWith);
   };
 
-  const handleInput = () => {
-    handleExpansion(null, "");
-  };
 
   loadSnippets();
   chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -138,5 +143,4 @@
   });
 
   document.addEventListener("keydown", handleKeydown);
-  document.addEventListener("input", handleInput);
 })();
