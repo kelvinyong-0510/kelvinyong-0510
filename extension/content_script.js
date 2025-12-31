@@ -177,21 +177,8 @@
     if (![" ", "Enter", "Tab"].includes(event.key)) {
       return;
     }
-    if (isContentEditable(document.activeElement)) {
-      return;
-    }
     const endWith = event.key === " " ? " " : event.key === "Enter" ? "\n" : "";
     handleExpansion(event, endWith);
-  };
-
-  const handleKeyup = (event) => {
-    if (![" ", "Enter", "Tab"].includes(event.key)) {
-      return;
-    }
-    if (!isContentEditable(document.activeElement)) {
-      return;
-    }
-    handleExpansion(null, "");
   };
 
 
@@ -203,5 +190,4 @@
   });
 
   document.addEventListener("keydown", handleKeydown);
-  document.addEventListener("keyup", handleKeyup);
 })();
